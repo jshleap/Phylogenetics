@@ -35,15 +35,17 @@ mergeFasta.py:
   
   The fasta file should have the .fas extension and should contain the species name 
   and accession as sequence header like:
-  >&lt;Species1_accesion1
+  
+  >Species1_accesion1
   SEQUENCE BIT
-  &lt;Species1_accession2
+  >Species1_accession2
   SEQUENCE BIT
-  &lt;Species2_accession3
+  >Species2_accession3
   SEQUENCE BIT
   .
   .
   .
+  
   
   This files are also created by SeqFetcher.py, freely available in this repo.
 
