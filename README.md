@@ -26,24 +26,24 @@ mergeFasta.py:
   name with all accession numbers downloaded. It is of the form:
   
     > Species1: Accesion1, Accesion2, ... , Accession_n
-    > Species2: Accesion1, Accesion2, ... , Accession_n
-    > .
-    > .
-    > .
-    > Speciesn: Accesion1, Accesion2, ... , Accession_n
+    Species2: Accesion1, Accesion2, ... , Accession_n
+    .
+    .
+    .
+    Speciesn: Accesion1, Accesion2, ... , Accession_n
      
   
   The fasta file should have the .fas extension and should contain the species name 
   and accession as sequence header like:
   >&lt;Species1_accesion1
-  >SEQUENCE BIT
-  >&lt;Species1_accession2
-  >SEQUENCE BIT
-  >&lt;Species2_accession3
-  >SEQUENCE BIT
-  >.
-  >.
-  >.
+  SEQUENCE BIT
+  &lt;Species1_accession2
+  SEQUENCE BIT
+  &lt;Species2_accession3
+  SEQUENCE BIT
+  .
+  .
+  .
   
   This files are also created by SeqFetcher.py, freely available in this repo.
 
