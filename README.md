@@ -25,7 +25,7 @@ mergeFasta.py:
   cytochrome b). It requires a <prefix>SpList.txt which is a file linking a species
   name with all accession numbers downloaded. It is of the form:
   
-    > Species1: Accesion1, Accesion2, ... , Accession_n
+    Species1: Accesion1, Accesion2, ... , Accession_n
     Species2: Accesion1, Accesion2, ... , Accession_n
     .
     .
