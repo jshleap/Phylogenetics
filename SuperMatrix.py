@@ -32,7 +32,7 @@ Requires:
 3) Fasta2Nexus.pl, which in turn requires BioPerl libraries
 4) RAxML, available at http://sco.h-its.org/exelixis/web/software/raxml/index.html
 5) perl available at http://raven.iab.alaska.edu/~ntakebay/teaching/programming/perl-scripts/fasta2nexus.pl
-6) A utils folder available at https://github.com/AlexSafatli/LabBlouinTools
+6) A labblouin folder available at https://github.com/AlexSafatli/LabBlouinTools
 
 Points 1,3 should be in the same folder of the selected fasta files. The requirement 6 should be either in the same folder
 or in the python path
@@ -40,7 +40,7 @@ or in the python path
 """
 
 import sys,os
-from utils.FASTAnet import FASTAstructure as F
+from labblouin.FASTAnet import FASTAstructure as F
 from properAlignment import if_prot
 from subprocess import Popen, PIPE
 from glob import glob
@@ -49,8 +49,8 @@ import cPickle as pickle
 
 
 class consensus:
-    def __init__(self,prefix):
-        self.F= F(prefix+'.fasta')
+    def __init__(self,prefix, ext='.fasta'):
+        self.F= F(prefix+ext)
         self.prefix=prefix
         self.species=[]
         self.fsp=self.F.sequences.keys()
@@ -170,7 +170,7 @@ def parse_nexus(nexusfile):
             parts.append(gene+' '+'= '+rang)
     return parts
 
-def partition_file(prefix,types,g):
+def partition_file(prefix,types,g=False):
     fout=open(prefix+'.part','w')
     parts=parse_nexus('btCOMBINED.nex')
     pickle.dump((parts,types),open('types.pckl','wb'))
@@ -199,7 +199,7 @@ def partition_file(prefix,types,g):
 def run_raxml(fileprefix,cluster=False):
     print 'Running raxml on the combined dataset'
     if not cluster:
-        rax=Popen('raxmlHPC -m GTRGAMMA -n %s -s %s -f s -q %s -k -f a -x 12345 -N 100'
+        rax=Popen('raxmlHPC-SSE3 -m GTRGAMMA -n %s -s %s -f s -q %s -k -f a -x 12345 -N 100'
                   %(fileprefix,fileprefix+'.phy', fileprefix+'.part'),shell=True,stdout=PIPE,
                   stderr=PIPE)
         o,e = rax.communicate()
@@ -211,34 +211,37 @@ def run_raxml(fileprefix,cluster=False):
                   shell=True)
         o,e=qsc.communicate()
         print o,e
-    
-prefix = sys.argv[1]
-try:
-    c= sys.argv[2]
-    cluster=True
-except:
-    cluster=False
-    
-files = glob('*.fasta')
-types={}
-g=False
-for fi in files:
-    print fi
-    if not os.path.isfile('types.pkcl'):
-        model, gamma, inv, frec = None,None,None,None
-        t=consensus(fi[:-6])   
-        if t.typ =='prot':
-            model, gamma, inv, frec = run_prottest(fi)
-        types[fi[:-6]]=(t.typ,model, gamma, inv, frec)
-        pickle.dump(types,open('Dtps.pkcl','wb'))
-    else:
-        tup = pickle.load(open('types.pckl'))
-        parts,types = tup[0],tup[1]
-    
 
-Concatenate(prefix)
-partition_file(prefix,types,g)
-run_raxml(prefix,cluster)
-print 'Done'
+
+
+if __name__ == "__main__":    
+    prefix = sys.argv[1]
+    try:
+        c= sys.argv[2]
+        cluster=True
+    except:
+        cluster=False
+        
+    files = glob('*.fasta')
+    types={}
+    g=False
+    for fi in files:
+        print fi
+        if not os.path.isfile('types.pkcl'):
+            model, gamma, inv, frec = None,None,None,None
+            t=consensus(fi[:-6])   
+            if t.typ =='prot':
+                model, gamma, inv, frec = run_prottest(fi)
+            types[fi[:-6]]=(t.typ,model, gamma, inv, frec)
+            pickle.dump(types,open('Dtps.pkcl','wb'))
+        else:
+            tup = pickle.load(open('types.pckl'))
+            parts,types = tup[0],tup[1]
+        
+    
+    Concatenate(prefix)
+    partition_file(prefix,types,g)
+    run_raxml(prefix,cluster)
+    print 'Done'
 
 
